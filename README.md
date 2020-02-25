@@ -1,4 +1,4 @@
-# server_render_project
+# server_render
 
 > A Vue.js project
 
