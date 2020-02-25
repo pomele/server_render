@@ -5,6 +5,7 @@ const KoaRuoter = require('koa-router')
 const serve = require('koa-static')
 const { createBundleRenderer } = require('vue-server-renderer')
 const LRU = require('lru-cache')
+const setupDevServer = require('./build/setup-dev-server')
 
 const resolve = file => path.resolve(__dirname, file)
 const app = new Koa()
@@ -27,11 +28,37 @@ function createRenderer (bundle, options) {
 }
 
 let renderer
-const bundle = require('./dist/vue-ssr-server-bundle.json')
-const clientManifest = require('./dist/vue-ssr-client-manifest.json')
-renderer = createRenderer(bundle, {
-  clientManifest
-})
+// const bundle = require('./dist/vue-ssr-server-bundle.json')
+// const clientManifest = require('./dist/vue-ssr-client-manifest.json')
+// renderer = createRenderer(bundle, {
+//   clientManifest
+// })
+
+// 热重载， 生产环境不需要，开发环境需要，通过setupDevServer
+if (process.env.NODE_ENV === 'production') {
+  // console.log('生产环境')
+  // return
+  // 获取客户端、服务器端打包生成的json文件
+  const bundle = require('./dist/vue-ssr-server-bundle.json')
+  const clientManifest = require('./dist/vue-ssr-client-manifest.json')
+  // 赋值
+  renderer = createRenderer(bundle, {
+    clientManifest
+  })
+  // 静态资源，开发环境不需要指定
+  // router.get('/static/*', async (ctx, next) => {
+  //   console.log('进来')
+  //   await send(ctx, ctx.path, { root: __dirname + '/dist' });
+  // })
+} else {
+  // console.log('开发环境')
+  // return
+  // 假设setupDevServer已经实现，并传入的回调函数会接受生成的json文件
+  setupDevServer(app, (bundle, clientManifest) => {
+    // 赋值
+    renderer = createRenderer(bundle, clientManifest)
+  })
+}
 
 /**
  * 渲染函数

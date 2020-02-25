@@ -6,19 +6,22 @@
   "private": true,
   "scripts": {
     "dev": "node server.js",
-    "start": "npm run dev",
+    "start": "cross-env NODE_ENV=dev node server.js",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
     "lint": "eslint --ext .js,.vue src test/unit test/e2e/specs",
     "build": "node build/build.js",
-    "build:client": "webpack --config build/webpack.client.conf.js",
-    "build:server": "webpack --config build/webpack.server.conf.js"
+    "build:client": "cross-env NODE_ENV=dev webpack --config build/webpack.client.conf.js",
+    "build:server": "cross-env NODE_ENV=dev webpack --config build/webpack.server.conf.js"
   },
   "dependencies": {
     "koa": "^2.11.0",
     "koa-router": "^8.0.8",
     "koa-static": "^5.0.0",
+    "koa-webpack-dev-middleware": "^2.0.2",
+    "koa-webpack-hot-middleware": "^1.0.3",
+    "memory-fs": "^0.5.0",
     "vue-router": "^3.0.1",
     "vuex": "^3.1.2",
     "webpack-node-externals": "^1.7.2"
@@ -41,6 +44,7 @@
     "chalk": "^2.0.1",
     "chromedriver": "^2.27.2",
     "copy-webpack-plugin": "^4.0.1",
+    "cross-env": "^7.0.0",
     "cross-spawn": "^5.0.1",
     "css-loader": "^0.28.0",
     "eslint": "^4.15.0",

@@ -4,10 +4,17 @@ const merge = require('webpack-merge')
 const base = require('./webpack.base.conf')
 const glob = require('glob')
 const VueSSRClientPlugin = require('vue-server-renderer/client-plugin')
+const isProd = process.env.NODE_ENV === 'production'
 
 const config = merge(base, {
+  // mode: process.env.NODE_ENV || 'development',
   entry: {
     app: './src/client-entry.js'
+  },
+  output: {
+    path: path.resolve(__dirname, '../dist'),
+    publicPath: '/',
+    filename: '[name]-[chunkhash].js'
   },
   resolve: {
     alias: {
